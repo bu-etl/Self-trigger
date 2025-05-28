@@ -1,4 +1,0 @@
-v 4
-file / "/home/naomi/repos/Self-trigger/bitslip/vhdl/bitslip.vhd" "5e4660fed5bea23889f38bc92d9f6ceff2dc8f47" "20250318133814.159":
-  entity bitslip at 11( 514) + 0 on 11;
-  architecture bitslip_arch of bitslip at 29( 1134) + 0 on 12;

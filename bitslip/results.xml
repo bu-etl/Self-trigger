@@ -1,6 +1,0 @@
-<testsuites name="results">
-  <testsuite name="all" package="all">
-    <property name="random_seed" value="1742305094" />
-    <testcase name="test_bitslip" classname="bitslip_tb" file="/home/naomi/repos/Self-trigger/bitslip/tests/bitslip_tb.py" lineno="23" time="0.005074977874755859" sim_time_ns="280.001" ratio_time="55172.85137198158" />
-  </testsuite>
-</testsuites>
