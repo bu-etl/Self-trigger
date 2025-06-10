@@ -36,7 +36,7 @@ async def flashbitclear_tb(dut):
 
 
     # test every index as the flashing bit position
-    for idx in range(1):
+    for idx in range(DATA_WIDTH):
 
         await reset()
 
@@ -45,7 +45,7 @@ async def flashbitclear_tb(dut):
         confirm_done   = False           
 
         # Enough periods for search of flashing bit index + confirmation
-        max_periods = THRESHOLD + (DATA_WIDTH * FLASH_PERIOD)
+        max_periods = (2 * DATA_WIDTH) + THRESHOLD + 3
 
         for period in range(max_periods):
 

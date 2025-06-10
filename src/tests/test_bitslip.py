@@ -100,7 +100,8 @@ async def bitslip_tb(dut):
 def test_bitslip():
     """Sets up cocotb runs bitslip module test"""
     os.environ.setdefault("SIM", "ghdl")         
-    os.environ.setdefault("GHDL_FLAGS", "--std=08")
+    os.environ.setdefault("GHDL_FLAGS", "--std=08 --vcd=bitslip.vcd")
+    
 
     here = os.path.abspath(os.path.dirname(__file__))
     rtl  = os.path.join(here, "..", "hdl")
