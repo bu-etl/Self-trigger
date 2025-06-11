@@ -87,15 +87,11 @@ begin
 
               -- Increase threshold count if only valid phase left
               if num_valid = 1 then
-                if count = THRESHOLD then
-                  count <= THRESHOLD;
+                if count >= THRESHOLD then
+                  state <= ACTIVE;
                 else 
                   count <= count + 1;
                 end if;
-
-                if count >= THRESHOLD then
-                  state <= ACTIVE;
-                end if; 
               end if;
 
             -- If value did not toggle remove from the search

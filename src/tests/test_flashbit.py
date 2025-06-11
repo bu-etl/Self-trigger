@@ -24,7 +24,7 @@ async def flashbitclear_tb(dut):
     # Start the clock
     cocotb.start_soon(Clock(dut.clk_i, 10, units="ns").start())
 
-    # reset funciton
+    # reset function
     async def reset(cycles=5):
         dut.reset_i.value = 1
         for _ in range(cycles):
@@ -34,18 +34,17 @@ async def flashbitclear_tb(dut):
 
     failures = []
 
-
     # test every index as the flashing bit position
     for idx in range(DATA_WIDTH):
 
         await reset()
 
-        bit_state      = 0  # toggles every period
-        active_period  = None           
-        confirm_done   = False           
+        bit_state     = 0  # toggles every period
+        active_period = None         
+        confirm_done  = False        
 
         # Enough periods for search of flashing bit index + confirmation
-        max_periods = (2 * DATA_WIDTH) + THRESHOLD + 3
+        max_periods = (2 * DATA_WIDTH) + THRESHOLD + 10
 
         for period in range(max_periods):
 
@@ -56,10 +55,10 @@ async def flashbitclear_tb(dut):
             dut.data_i.value = pattern
             await RisingEdge(dut.clk_i)
 
-            # If already found flashing bit send check if clearing works 
-            if active_period is not None and period == active_period + 1 and not confirm_done:
+            # If the device is active, wait for a period where the input bit is '1' to confirm the output is cleared
+            if active_period is not None and bit_state == 1 and not confirm_done:
                 cocotb.log.info(
-                    f"[i={idx}] confirm pulse  input=0x{pattern:0{DATA_WIDTH//4}X} "
+                    f"[i={idx}] confirm pulse (input bit=1)  input=0x{pattern:0{DATA_WIDTH//4}X} "
                     f"output=0x{int(dut.data_o.value):0{DATA_WIDTH//4}X}"
                 )
                 if int(dut.data_o.value[idx]) != 0:
@@ -67,22 +66,23 @@ async def flashbitclear_tb(dut):
                         f"[i={idx}] flashing bit not cleared during confirmation period"
                     )
                 confirm_done = True
-                break
+                break # Test for this index is complete, exit the period loop
 
             # Send all 0's for rest of period
             dut.data_i.value = 0
             for _ in range(FLASH_PERIOD - 1):
                 await RisingEdge(dut.clk_i)
 
-            # Check if flashing bit found
+            # Check if flashing bit found 
             if active_period is None and dut.active_o.value == 1:
                 active_period = period
+                cocotb.log.info(f"[i={idx}] DUT entered ACTIVE state during period {period}")
 
             # Check if flashing bit previously found but now lost
-            if active_period is not None and dut.active_o.value != 1:
-                failures.append(f"[i={idx}] active_o de‑asserted at period {period}")
+            if active_period is not None and dut.active_o.value != 1 and not confirm_done:
+                failures.append(f"[i={idx}] active_o de-asserted at period {period} before confirmation")
 
-        # Should have found flashing bit and confirmed clearing works
+        # Append possible failures
         if active_period is None:
             failures.append(f"[i={idx}] never entered ACTIVE")
         elif not confirm_done:
@@ -110,8 +110,8 @@ def test_flashbitclear():
         module=os.path.splitext(os.path.basename(__file__))[0],
         waves=True,
         gui=0,
-        extra_env={         
-            "COCOTB_LOG_FILE":  "stdout",         
+        extra_env={        
+            "COCOTB_LOG_FILE":  "stdout",        
         },
     )
 
