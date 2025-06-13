@@ -9,6 +9,8 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_misc.all;
 use ieee.numeric_std.all;
 
+use work.def_pkg.all;
+
 entity trigger_rx is
   generic
   (
@@ -23,17 +25,21 @@ entity trigger_rx is
     uplink_data_i : in std_logic_vector (WIDTH - 1 downto 0);
     enable_i      : in std_logic_vector (WIDTH - 1 downto 0);
 
-    slip_i : in integer_vector (NUM_ETROCS - 1 downto 0);
+    --slip_i : in integer_vector (NUM_ETROCS - 1 downto 0);
+    slip_i : in  std_logic_vector(NUM_ETROCS * INTEGER_WIDTH - 1 downto 0);
     rate_i : in integer range 0 to 2; -- 0==320, 1==640, 2==1280
 
     trigger_o : out std_logic;
 
-    cnts_o : out integer_vector (NUM_ETROCS - 1 downto 0)
-
+    --cnts_o : out integer_vector (NUM_ETROCS - 1 downto 0)
+    cnts_o : out std_logic_vector(NUM_ETROCS * INTEGER_WIDTH - 1 downto 0)
   );
 end trigger_rx;
 
 architecture rtl of trigger_rx is
+
+  signal slip_i_internal : integer_vector(NUM_ETROCS - 1 downto 0);
+  signal cnts_o_internal : std_logic_vector(NUM_ETROCS * INTEGER_WIDTH - 1 downto 0);
 
   type data_slip_array_t is array (integer range 2 downto 0) of std_logic_vector(WIDTH - 1 downto 0);
   signal data_slip_320_640_1280 : data_slip_array_t;
@@ -45,6 +51,8 @@ architecture rtl of trigger_rx is
   signal or_16, or_16_r        : std_logic_vector (NUM_ETROCS/2 - 1 downto 0) := (others => '0');
   signal or_32                 : std_logic_vector (NUM_ETROCS/4 - 1 downto 0) := (others => '0');
 
+  signal counter_reset : std_logic;
+
   attribute MARK_DEBUG                : string;
   attribute MARK_DEBUG of or_8        : signal is "true";
   attribute MARK_DEBUG of or_16       : signal is "true";
@@ -53,6 +61,13 @@ architecture rtl of trigger_rx is
   attribute MARK_DEBUG of data_masked : signal is "true";
 
 begin
+
+  -- Convert into an array of integers
+  convert_slip_i : for i in 0 to NUM_ETROCS - 1 generate
+    slip_i_internal(i) <= to_integer(unsigned(slip_i((i+1) * INTEGER_WIDTH - 1 downto i * INTEGER_WIDTH)));
+  end generate;
+
+  cnts_o <= cnts_o_internal;
 
   --------------------------------------------------------------------------------
   -- Generate Bitslippers for Each Data Rate
@@ -74,7 +89,7 @@ begin
         port map
         (
           clk_i      => clock,
-          slip_cnt_i => slip_i(IETROC),
+          slip_cnt_i => slip_i_internal(IETROC),
           data_i     => uplink_data_i((IETROC+1) * NUM - 1 downto IETROC*NUM),
           data_o     => data_slip_320_640_1280(IRATE)((IETROC + 1) * NUM - 1 downto IETROC * NUM)
         );
@@ -166,7 +181,7 @@ begin
           when 2 =>
             if (I mod 4 = 0) then
               enable   <= '1';
-              cnt_flag <= or_16_r(I/4);
+              cnt_flag <= or_32(I/4);
             else
               enable   <= '0';
               cnt_flag <= '0';
@@ -181,6 +196,13 @@ begin
       end if;
     end process;
 
+    -- Process to create static signal
+    process(reset, enable)
+    begin
+      counter_reset <= reset or not enable;
+    end process;
+
+
     trig_rate_counter_inst : entity work.rate_counter
       generic
       map (
@@ -189,11 +211,11 @@ begin
       port
       map (
       clk_i   => clock,
-      reset_i => reset or not enable,
+      reset_i => counter_reset,
       en_i    => cnt_flag,
       rate_o  => cnt);
 
-    cnts_o(I) <= to_integer(unsigned(cnt));
+    cnts_o_internal((I+1) * INTEGER_WIDTH - 1 downto I * INTEGER_WIDTH) <= cnt(INTEGER_WIDTH - 1 downto 0);
 
   end generate;
 

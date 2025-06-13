@@ -8,7 +8,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity FlashBitClear is
+entity flash_bit is
   generic (
     DATA_WIDTH   : integer := 8;    
     FLASH_PERIOD : integer := 3546; -- Clock cycles between flashing bit pattern
@@ -21,9 +21,9 @@ entity FlashBitClear is
     data_o   : out std_logic_vector(DATA_WIDTH-1 downto 0);
     active_o : out std_logic  -- '1' when the flashing bit is cleared, '0' when searching
   );
-end FlashBitClear;
+end flash_bit;
 
-architecture Behavioral of FlashBitClear is
+architecture Behavioral of flash_bit is
 
   type state_type is (INIT, SEARCH, ACTIVE);
   signal state : state_type := INIT;
