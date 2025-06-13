@@ -141,7 +141,7 @@ async def run_trigger_test(dut, rate):
             dut._log.info(f"[Test 2, Rate {rate}] Injecting hit at cycle {cycle}, position {hit_position}.")
 
             dut._log.info("--- DEBUG INFO ---")
-            dut._log.info("active_o = 0x{dut.active_o.value.hexstring()}")
+            dut._log.info(f"active_o = 0x{dut.active_o.value.hexstring()}")
             dut._log.info("--------------------")
 
         # Combine patterns and drive the input

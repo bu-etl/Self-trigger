@@ -105,7 +105,7 @@ def test_flashbitclear():
 
     run(
         vhdl_sources=[os.path.join(rtl, "flash.vhd")],
-        toplevel="flashbitclear",
+        toplevel="flash_bit",
         toplevel_lang="vhdl",
         module=os.path.splitext(os.path.basename(__file__))[0],
         waves=True,
