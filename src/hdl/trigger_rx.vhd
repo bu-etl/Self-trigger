@@ -51,7 +51,7 @@ architecture rtl of trigger_rx is
   signal or_16, or_16_r        : std_logic_vector (NUM_ETROCS/2 - 1 downto 0) := (others => '0');
   signal or_32                 : std_logic_vector (NUM_ETROCS/4 - 1 downto 0) := (others => '0');
 
-  signal counter_reset : std_logic;
+  signal counter_reset : std_logic_vector(NUM_ETROCS - 1 downto 0);
 
   attribute MARK_DEBUG                : string;
   attribute MARK_DEBUG of or_8        : signal is "true";
@@ -199,7 +199,7 @@ begin
     -- Process to create static signal
     process(reset, enable)
     begin
-      counter_reset <= reset or not enable;
+      counter_reset(I) <= reset or not enable;
     end process;
 
 
@@ -211,7 +211,7 @@ begin
       port
       map (
       clk_i   => clock,
-      reset_i => counter_reset,
+      reset_i => counter_reset(I),
       en_i    => cnt_flag,
       rate_o  => cnt);
 
