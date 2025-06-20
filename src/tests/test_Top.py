@@ -228,7 +228,7 @@ def test_self_trig():
         os.path.join(rtl_dir, "rate_counter.vhd") 
     ]
     
-    # Override, especially for the rate_counter generic to update every 10,000 cycles instead of ~40 million
+    # Override, rate_counter generic to update every 10,000 cycles instead of ~40 million for simulation
     generics = {
         "g_CLK_FREQUENCY" : 10000 
     }
@@ -238,7 +238,7 @@ def test_self_trig():
         toplevel="self_trig",
         toplevel_lang="vhdl",
         module=os.path.splitext(os.path.basename(__file__))[0],
-        generics=generics,
+        parameters=generics,
         waves=True,
         gui=0,
         extra_env={
@@ -249,3 +249,6 @@ def test_self_trig():
 if __name__ == "__main__":
     import pytest, sys
     sys.exit(pytest.main(sys.argv[1:] + [__file__]))
+
+
+
