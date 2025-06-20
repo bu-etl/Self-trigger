@@ -20,7 +20,10 @@ entity self_trig is
 
         -- flash 
         FLASH_PERIOD    : integer := 3546; 
-        THRESHOLD       : integer := 10
+        THRESHOLD       : integer := 10;
+
+        -- rate counter
+        g_CLK_FREQUENCY : integer := 40000000
     );
     port (
         clk_i           : in  std_logic;
