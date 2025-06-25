@@ -40,8 +40,14 @@ begin
   active_o <= active_o_internal;
 
   process(clk_i)
+    -- ACTIVE logic
     variable tmp_data : std_logic_vector(DATA_WIDTH-1 downto 0);
-    variable found : boolean;
+
+    -- INIT logic
+    variable found_prim : boolean;
+    variable found_sec  : boolean;
+    variable index_prim : integer range 0 to DATA_WIDTH-1 := 0;
+    variable index_sec  : integer range 0 to DATA_WIDTH-1 := 0;
   begin
     if rising_edge(clk_i) then
       if reset_i = '1' then
@@ -59,30 +65,44 @@ begin
 
             data_o <= data_i;
             active_o_internal <= '0';
-            found := false;
+            found_prim := false;
+            found_sec := false;
 
-            -- Look for first '1' bit in data word starting at index
-            for i in index to DATA_WIDTH-1 loop
-              if data_i(i) = '1' and not found then
-                index <= i;
-                state <= SEARCH;
-                clk_counter <= 0;
-                count <= 0;
-                found := true;
+
+            -- Look for first '1' bit in data word with priority of index
+            for i in 0 to DATA_WIDTH-1 loop
+              if data_i(i) = '1' then
+
+                if i >= index and not found_prim then
+                  found_prim := true;
+                  index_prim := i;
+                end if;
+
+                if i < index and not found_sec then
+                  found_sec := true;
+                  index_sec := i;
+                end if;
               end if;
             end loop;
 
-            -- Check rest of data word if still no '1' bit is found
-            if not found then
-              for i in 0 to index-1 loop
-                if data_i(i) = '1' and not found then
-                  index <= i;
-                  state <= SEARCH;
-                  clk_counter <= 0;
-                  count <= 0;
-                  found := true;
-                end if;
-              end loop;
+            -- Update index to reflect where the 1 was found
+            if found_prim then 
+              index <= index_prim;
+              state <= SEARCH;
+              count <= 0;
+              clk_counter <= 0;
+            elsif found_sec then
+              index <= index_sec;
+              state <= SEARCH;
+              count <= 0;
+              clk_counter <= 0;
+            else
+              if index = DATA_WIDTH -1 then
+                index <= 0;
+              else 
+                index <= index +1;
+              end if;
+              state <= INIT;
             end if;
 
           when SEARCH =>
