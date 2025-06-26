@@ -1,6 +1,6 @@
 # Self-Trigger
 
-This project is meant to design and test a self-trigger feature for the following larger FPGA project: [module_test_fw](https://gitlab.cern.ch/cms-etl-electronics/module_test_fw) which firmware is used to develop and test front-end electronics for the endcap regions of the new MIP Timing Detector for the CMS Experiment at CERN.
+This project is a self contained repo meant to design and test a self-trigger feature for the following larger FPGA project: [module_test_fw](https://gitlab.cern.ch/cms-etl-electronics/module_test_fw) which firmware is used to develop and test front-end electronics for the endcap regions of the new MIP Timing Detector for the CMS Experiment at CERN.
 
 **Self-Trigger** is a VHDL design with _cocotb_ test-bench simulations that monitors the trigger uplink data of multiple ETROCs. It masks repeatedly occuring “flashing” bits coming from ETROC words and issues a Level-1 Accept (L1A) trigger whenever a real hit is observed.
 
