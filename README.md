@@ -35,14 +35,14 @@ self-trigger/
 ├── hdl                    ← VHDL RTL
 │   ├── Top.vhd            ← Top-level wrapper (instantiates `self_trig`)
 │   ├── bitslip.vhd        ← bit-slipper
-│   ├── def\_pkg.vhd       ← Types & constants for simulation
+│   ├── def_pkg.vhd        ← Types & constants for simulation
 │   ├── flash.vhd          ← Flashing-bit detector / clearer
-│   ├── rate\_counter.vhd
-│   └── trigger\_rx.vhd    ← L1A generator w/ Hit rate counter + bitsliping and multi-rates
+│   ├── rate_counter.vhd
+│   └── trigger_rx.vhd     ← L1A generator w/ Hit rate counter + bitsliping and multi-rates
 └── tests                  ← Python simulation test-benches
-├── test\_Top.py
-├── test\_bitslip.py
-└── test\_flashbit.py
+├── test_Top.py
+├── test_bitslip.py
+└── test_flashbit.py
 
 ````
 
@@ -52,13 +52,13 @@ self-trigger/
 
 ## Quick Start
 
-> **Prerequisites**
->
-> | Tool    | Tested version(s)            |
-> | ------- | ---------------------------- |
-> | Python  | ≥ 3.9                        |
-> | GHDL    | 4.0-dev (LLVM or mcode)      |
-> | GTKWave | 3.3.x (for waveform viewing) |
+**Prerequisites**
+
+| Tool    | Tested version(s)            |
+| ------- | ---------------------------- |
+| Python  | ≥ 3.9                        |
+| GHDL    | 4.0-dev (LLVM or mcode)      |
+| GTKWave | 3.3.x (for waveform viewing) |
 
 > **Note:** GTKWave is optional
 
