@@ -32,17 +32,17 @@ self-trigger/
 ├── pytest.ini             ← pytest settings
 ├── requirements.txt       ← Python dependencies 
 └── src
-├── hdl                    ← VHDL RTL
-│   ├── Top.vhd            ← Top-level wrapper (instantiates `self_trig`)
-│   ├── bitslip.vhd        ← bit-slipper
-│   ├── def_pkg.vhd        ← Types & constants for simulation
-│   ├── flash.vhd          ← Flashing-bit detector / clearer
-│   ├── rate_counter.vhd
-│   └── trigger_rx.vhd     ← L1A generator w/ Hit rate counter + bitsliping and multi-rates
-└── tests                  ← Python simulation test-benches
-├── test_Top.py
-├── test_bitslip.py
-└── test_flashbit.py
+    ├── hdl                    ← VHDL RTL
+    │   ├── Top.vhd            ← Top-level wrapper (instantiates `self_trig`)
+    │   ├── bitslip.vhd        ← bit-slipper
+    │   ├── def_pkg.vhd        ← Types & constants for simulation
+    │   ├── flash.vhd          ← Flashing-bit detector / clearer
+    │   ├── rate_counter.vhd
+    │   └── trigger_rx.vhd     ← L1A generator w/ Hit rate counter + bitsliping and multi-rates
+    └── tests                  ← Python simulation test-benches
+        ├── test_Top.py
+        ├── test_bitslip.py
+        └── test_flashbit.py
 
 ````
 
